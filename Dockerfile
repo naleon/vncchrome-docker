@@ -1,4 +1,4 @@
-FROM debian:stable-slim AS base-unsquashed
+FROM debian:unstable AS base-unsquashed
 
 ENV \
 	DEBIAN_FRONTEND='noninteractive' \
@@ -7,6 +7,7 @@ ENV \
 	LANGUAGE='en_US:en' \
 	LC_ALL='en_US.UTF-8' \
 	TZ='America/Los_Angeles'
+
 
 RUN \
 	apt-get -y update && \
@@ -29,6 +30,27 @@ RUN \
 		xterm && \
 	rm -rf /var/lib/apt/lists/*
 
+RUN apt install apt-transport-https
+
+RUN echo "deb https://deb.torproject.org/torproject.org sid main\ndeb-src https://deb.torproject.org/torproject.org sid main" > /etc/apt/sources.list.d/tor.list
+
+RUN curl https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | gpg --import
+RUN gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
+
+RUN apt-key adv --recv-keys --keyserver keys.openpgp.org 74A941BA219EC810
+RUN apt-get update
+RUN apt-get install tor deb.torproject.org-keyring -y
+
+
+# Finally install Tor
+RUN apt update
+RUN apt install -y --no-install-recommends tor deb.torproject.org-keyring
+
+
+RUN \
+  apt-get install tor
+  
+
 RUN \
 	ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
 	echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen && \
@@ -40,6 +62,7 @@ RUN \
 	mkdir -p /home/chrome/Downloads && \
 	mkdir -p /data && \
 	chown -R chrome:chrome /home/chrome /data
+
 
 USER chrome
 

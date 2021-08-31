@@ -23,7 +23,9 @@ gheight=$(echo ${GEOMETRY} | cut -d 'x' -f 2)
 
 export DISPLAY=:0
 
+tor &
 /usr/bin/google-chrome \
+    --proxy-server="socks://localhost:9050" \
     --disable-default-apps \
     --disable-dev-shm-usage \
     --disable-gpu \
