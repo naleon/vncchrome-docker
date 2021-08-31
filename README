@@ -1,4 +1,4 @@
-A simple container which runs chrome with remote debugging, tigervnc, and socat.
+A simple container which runs chrome with remote debugging, tigervnc, and socat behind tor :)
 
 $ docker build -t vncchrome .
 
